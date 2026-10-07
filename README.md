@@ -4,7 +4,70 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
-## Step 1: Start Metro
+## System Requirements
+
+- **Node.js**: v23.11.0
+- **npm**: 10.9.2
+- **Java**: OpenJDK 17.0.16 2025-07-15 LTS (Zulu17.60+17-CA)
+- **Ruby**: 3.2.2 (2023-03-30 revision e51014f9c0) [arm64-darwin25]
+- **CocoaPods**: 1.16.2
+
+## Step 1: Install Dependencies
+
+First, install the project dependencies:
+
+```sh
+npm install
+```
+
+## Step 2: Android Setup
+
+### Required Files for Android Build
+
+After running `npm install`, you need to manually replace some files for Android builds. Required files are available at:
+- `add-lib-folder inside -ffmpeg-kit-react-native--android`
+
+### Fixing Android Build Errors
+
+While building the app for Android, you may encounter errors with two libraries:
+
+#### 1. ffmpeg-kit-react-native
+
+**Solution:**
+Replace the `libs` folder and `build.gradle` file in `node_modules/ffmpeg-kit-react-native/android` with the files from:
+- `add-lib-folder inside -ffmpeg-kit-react-native--android`
+
+#### 2. react-native-deepar
+
+**Solution:**
+Replace the `libs` folder and `build.gradle` file in `node_modules/react-native-deepar/android` with the files from:
+- `add-libs-folder-inside-react-native-deepar`
+
+## Step 3: iOS Setup
+
+If you encounter any issues in Xcode regarding pods not being installed correctly, follow these steps:
+
+1. Delete `node_modules` folder:
+```sh
+rm -rf node_modules
+```
+
+2. Install the correct Bundler version:
+```sh
+sudo gem install bundler:2.4.22
+```
+
+3. Install Ruby gems:
+```sh
+bundle install
+```
+
+4. Install CocoaPods dependencies:
+```sh
+bundle exec pod install --project-directory=ios
+```
+
+## Step 4: Start Metro
 
 First, you will need to run **Metro**, the JavaScript build tool for React Native.
 
@@ -18,7 +81,7 @@ npm start
 yarn start
 ```
 
-## Step 2: Build and run your app
+## Step 5: Build and Run Your App
 
 With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
 
@@ -30,25 +93,12 @@ npm run android
 
 # OR using Yarn
 yarn android
+
+# OR using npx
+npx react-native run-android
 ```
 
 ### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
-bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
-bundle exec pod install
-```
-
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
 
 ```sh
 # Using npm
@@ -56,17 +106,44 @@ npm run ios
 
 # OR using Yarn
 yarn ios
+
+# OR using npx
+npx react-native run-ios
 ```
 
 If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
 
 This is one way to run your app — you can also build it directly from Android Studio or Xcode.
 
-## Step 3: Modify your app
+## Building Release Versions
+
+### Android Release APK
+
+To build a release APK for Android:
+
+```sh
+cd android
+./gradlew assembleRelease
+```
+
+The APK will be located at: `android/app/build/outputs/apk/release/app-release.apk`
+
+### Android Release AAB (App Bundle)
+
+To build a release AAB for Android:
+
+```sh
+cd android
+./gradlew bundleRelease
+```
+
+The AAB will be located at: `android/app/build/outputs/bundle/release/app-release.aab`
+
+## Step 6: Modify Your App
 
 Now that you have successfully run the app, let's make changes!
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
 
 When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
 

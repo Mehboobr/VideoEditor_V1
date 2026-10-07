@@ -17,9 +17,12 @@ end
 target 'VideoEditor_v1' do
   config = use_native_modules!
 
+  # ✅ Force using your local patched version instead of official GitHub
+  pod 'ffmpeg-kit-ios-full-gpl', :podspec => './ffmpeg-kit-ios-full-gpl.podspec'
+  pod 'ffmpeg-kit-react-native', :path => '../node_modules/ffmpeg-kit-react-native'
+
   use_react_native!(
     :path => config[:reactNativePath],
-    # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
@@ -27,8 +30,10 @@ target 'VideoEditor_v1' do
     react_native_post_install(
       installer,
       config[:reactNativePath],
-      :mac_catalyst_enabled => false,
-      # :ccache_enabled => true
+      :mac_catalyst_enabled => false
     )
   end
 end
+
+
+21` `
