@@ -17,6 +17,7 @@ import DocumentPicker from '@react-native-documents/picker';
 import "./global.css";
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import Video from "react-native-video";
+import VideoTrimmer from './src/components/VideoTrimmer';
 // import Editbottomicons from './src/components/Editbottomicons';
 
 const { FilePicker } = NativeModules;
@@ -36,6 +37,7 @@ export default function App() {
   const [trimEnd, setTrimEnd] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [showTrimmer, setShowTrimmer] = useState(false);
 
   const insets = useSafeAreaInsets();
   const videoRef = useRef(null);
@@ -305,10 +307,28 @@ export default function App() {
           paused={isPaused}
           repeat={false}
           onLoad={(data) => {
-            const actualTrimEnd = Math.min(data.duration, selectedTimer);
-            setVideoDuration(actualTrimEnd);
+            console.log('Video loaded, duration:', data.duration);
+            setVideoDuration(data.duration);
             setTrimStart(0);
-            setTrimEnd(actualTrimEnd);
+            setTrimEnd(data.duration);
+            
+            // Warn if video is very large
+            if (data.duration > 300) {
+              Alert.alert(
+                'Large Video',
+                `This video is ${Math.floor(data.duration / 60)} minutes long. For better performance, consider trimming it to a shorter length.`,
+                [{ text: 'OK' }]
+              );
+            }
+          }}
+          onError={(error) => {
+            console.error('Video load error:', error);
+            setFileUri(null);
+            Alert.alert(
+              'Video Error',
+              'Failed to load video. The file may be corrupted, too large, or in an unsupported format.',
+              [{ text: 'OK' }]
+            );
           }}
           onProgress={(data) => {
             setCurrentTime(data.currentTime);
@@ -324,6 +344,7 @@ export default function App() {
           }}
         />
       )}
+
 
 
       {/* TOP BAR */}
@@ -505,23 +526,23 @@ export default function App() {
               <Text className="text-white text-xs font-medium">Voice Over</Text>
             </View>
 
-           
+
 
             <View className="items-center">
               <TouchableOpacity
-                onPress={getPickerOptions}
+                onPress={() => setShowTrimmer(true)}
                 className="w-16 h-16 bg-blue-300 rounded-xl items-center justify-center mb-1"
               >
                 <Feather name="scissors" size={32} color="black" />
               </TouchableOpacity>
               <Text className="text-white text-xs font-medium">Trim</Text>
             </View>
-             
+
           </View>
 
       }
 
-  
+
 
       {/* TIMER POPUP */}
       <Modal visible={showTimerModal} transparent animationType="fade">
@@ -556,6 +577,20 @@ export default function App() {
           </View>
         </TouchableOpacity>
       </Modal>
+
+      {/* VIDEO TRIMMER */}
+      {fileUri && videoDuration > 0 && (
+        <VideoTrimmer
+          visible={showTrimmer}
+          onClose={() => setShowTrimmer(false)}
+          videoUri={fileUri}
+          videoDuration={videoDuration}
+          onTrimComplete={(trimmedPath) => {
+            setFileUri(trimmedPath);
+            Alert.alert('Success', 'Video trimmed successfully!');
+          }}
+        />
+      )}
     </SafeAreaView>
   );
 }
